@@ -13,8 +13,7 @@ def ask(prompt: str, default: str = "") -> str:
     txt = input(f"{prompt}: ").strip()
     return txt or default
 
-def format_trials(trials: List[Dict]) -> str:
-    """Return a nicely formatted numbered list of trials with title, status, conditions, and summary."""
+def format_trials(trials: List[Dict], max_summary_chars: int | None = None) -> str:
     lines = []
     for i, t in enumerate(trials, 1):
         title = t.get("title") or "Untitled Study"
@@ -23,29 +22,31 @@ def format_trials(trials: List[Dict]) -> str:
         conditions = ", ".join(t.get("conditions") or ["Not specified"])
 
         summary = (t.get("summary") or "").replace("\n", " ").strip()
-        summary_short = summary[:400] + ("..." if len(summary) > 400 else "")
+        if max_summary_chars is not None:
+            summary = summary[:max_summary_chars] + ("..." if len(summary) > max_summary_chars else "")
 
         block = (
             f"{i}. {title} (NCT: {nct})\n"
             f"   Status: {status}\n"
             f"   Conditions: {conditions}\n"
-            f"   Summary: {summary_short}\n"
+            f"   Summary: {summary}\n"
         )
         lines.append(block)
     return "\n".join(lines)
+
 
 
 def summarize_for_user(age: str, condition: str, location: str, trials_block: str) -> str:
     prompt = (
         "You are a concise, empathetic assistant helping a patient discover clinical trials.\n"
         f"Patient: age {age}, condition '{condition}', location '{location}'.\n"
-        "You have a short list of trial options below. Write a warm, 5–7 sentence summary of what we found, "
-        "include 1–2 concrete next steps (e.g., confirm eligibility details, contact site), "
-        "and remind them results are informational (not medical advice). Then list the trials in a bullet list.\n\n"
-        f"TRIALS:\n{trials_block}"
+        "Write one short, friendly paragraph (5–7 sentences) summarizing what we found and next steps. "
+        "Do NOT list or repeat the trials — I will print the full list after your paragraph. "
+        "Remind the patient this is informational, not medical advice.\n"
     )
     text, _meta = lm(prompt)
     return text
+
 
 def main():
     ver = ping_version()
@@ -79,17 +80,21 @@ def main():
         print("\nSorry—I couldn’t find trials with those inputs. Try broadening the condition or location.")
         return
 
-    block = format_trials(trials)
+    block = format_trials(trials, max_summary_chars=None)
+
+    # 1) LLM paragraph only
     print("\n" + summarize_for_user(age, condition, location, block))
 
-    # Save for inspection
+    # 2) Full, numbered list (all trials, full wording)
+    print("\nHere are the trials we found:\n")
+    print(block)
+
     outdir = Path("data"); outdir.mkdir(exist_ok=True, parents=True)
     (outdir / "last_query.txt").write_text(
         f"age={age}\ncondition={condition}\nlocation={location}\n\n{block}",
         encoding="utf-8"
     )
     print("\nSaved results to data/last_query.txt")
-    print("\nIf any title looks promising, tell me its number next time and I can fetch more details.")
 
 if __name__ == "__main__":
     main()
