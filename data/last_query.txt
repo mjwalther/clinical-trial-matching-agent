@@ -1,0 +1,8 @@
+age=23
+condition=breast cancer
+location=California
+
+1. Using Biomarkers to Help Guide Safe Immunotherapy Discontinuation in Patients With Unresectable Stage IIIB-IV Melanoma, The PET-Stop Trial (NCT: NCT04462406)
+   Status: RECRUITING
+   Conditions: Advanced Melanoma, Clinical Stage III Cutaneous Melanoma AJCC v8, Clinical Stage IV Cutaneous Melanoma AJCC v8, Melanoma of Unknown Primary, Pathologic Stage IIIB Cutaneous Melanoma AJCC v8, Pathologic Stage IIIC Cutaneous Melanoma AJCC v8, Pathologic Stage IIID Cutaneous Melanoma AJCC v8, Pathologic Stage IV Cutaneous Melanoma AJCC v8, Unresectable Acral Lentiginous Melanoma, Unresectable Melanoma, Unresectable Mucosal Melanoma
+   Summary: This phase II trial investigates how well biomarkers on PET/CT imaging drive early discontinuation of anti-PD-1 therapy in patients with stage IIIB-IV melanoma that cannot be removed by surgery (unresectable). Anti-PD-1 therapy has become a standard therapy option for patients with unresectable melanoma. This trial is being done to determine if doctors can safely shorten the use of standard of car...
